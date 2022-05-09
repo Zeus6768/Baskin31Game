@@ -1,0 +1,29 @@
+/* 폰트 설정 */
+@font-face {
+    font-family: 'BRRA_R';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_seven@1.2/BRRA_R.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+/* 전체 설정 */
+body {
+    font-family: 'BRRA_R', serif;
+    font-size: 20px;
+}
+
+#home {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 100px;
+}
+
+input {
+    font-family: 'BRRA_R', serif;
+    font-size: 30px;
+    text-align: center;
+    width: 200px;
+}
+

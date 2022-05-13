@@ -27,7 +27,10 @@ input {
     font-family: 'BRRA_R', serif;
     font-size: 30px;
     text-align: center;
-    width: 200px;
+    width: 150px;
+    height: 50px;
+    border-radius: 15px;
+    border-color: pink;
 }
 
 #ending {
@@ -36,6 +39,22 @@ input {
     justify-content: center;
     align-items: center;
 }
+
+#image {
+    text-align: center;
+}
+
+#ready{
+    text-align: center;
+}
+
+.name{
+    display: inline;
+    margin-left: 90px;
+    margin-right: 90px;
+}
+
+/* 버튼 */
 
 .icon {
     margin-top: 0;
@@ -89,6 +108,8 @@ button:hover::after {
     transform: translate(-50%, -50%);
     animation: ring 1.5s infinite;
 }
+
+/* 푸터 */
 
 footer {
     font-size: 14px;

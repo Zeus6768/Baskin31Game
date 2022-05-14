@@ -1,0 +1,49 @@
+.numbers,table,tr,th{
+    border:1px solid black;
+    margin:auto;
+}
+img {
+  margin: auto;
+  display: block;
+  width : 150px;
+  height: 150px;
+}
+.input_names #first{
+  margin-left: 100px;
+}
+.input_names #second{
+  margin-left: 50px;
+}
+.input_names #third{
+  margin-left: 50px;
+}
+.input_names #fourth{
+  margin-left: 50px;
+}
+.input_names #fifth{
+  margin-left: 50px;
+}
+.container{
+  margin-top: 100px;
+  margin-left: 250px;
+  width: 1000px;
+  height: 200px;
+}
+.resultboxes{
+  margin-left: 50px;
+  width: 100px;
+  height: 100px;
+  border: 3px solid black;
+  border-style: dotted;
+  float: left;
+  background-color: darkgray;
+}
+.resultboxes p{
+  text-align: center;
+  font-size: 35px;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  font-style: oblique;
+}
+footer{
+  text-align: center;
+}

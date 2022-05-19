@@ -1,7 +1,7 @@
 {
   "name": "baskin31game",
   "version": "1.0.0",
-  "description": "",
+  "description": "🍨 네트워크 과제로 만든 베스킨라빈스31 게임입니다.",
   "main": "index.html",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/baskinrobbins31/Baskin31Game/issues"
   },
-  "homepage": "https://github.com/baskinrobbins31/Baskin31Game#readme"
+  "homepage": "https://github.com/baskinrobbins31/Baskin31Game#readme",
+  "dependencies": {
+    "ejs": "^3.1.8",
+    "express": "^4.18.1",
+    "http": "^0.0.1-security",
+    "ws": "^8.6.0"
+  }
 }

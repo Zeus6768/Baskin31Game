@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="index.css">
+    <link rel="stylesheet" href="home.css">
 
     <title>31Game</title>
 </head>
@@ -12,10 +12,13 @@
 
     <div id="home">
         <img src="image/rogo/BRlogo3.jpeg" width="600"> <br>
-        <form action="/check" method="get">
+        <form action="/start" method="get">
             <input id="inputName" name="username" type="text" placeholder="이름입력"> <br>
             <button id="start" type="submit">입장하기</button>
         </form>
+        <% if (!isOpen) { %>
+            <h2>서버가 가득 찼습니다. </h2>
+        <% } %>
     </div>
 
 

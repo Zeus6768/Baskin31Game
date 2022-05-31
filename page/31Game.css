@@ -33,13 +33,6 @@ input {
     margin-top: 8%;
 }
 
-#number {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-}
-
 #gameIceCreamImage {
     text-align: center;
     margin-top: 5%;

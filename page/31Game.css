@@ -7,25 +7,17 @@
     font-style: normal;
 }
 
-
 /* 전체 설정 */
 
 body {
+    text-align: center;
     font-family: 'BRRA_R', serif;
-    font-size: 20px;
-}
-
-#home {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin-top: 100px;
+    font-size: 125%;
 }
 
 input {
     font-family: 'BRRA_R', serif;
-    font-size: 30px;
+    font-size: 150%;
     text-align: center;
     width: 150px;
     height: 50px;
@@ -33,40 +25,38 @@ input {
     border-color: pink;
 }
 
-#ending {
+#startPage {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    margin-top: 8%;
 }
 
-#image {
+#gameIceCreamImage {
     text-align: center;
-}
-
-#ready{
-    text-align: center;
+    margin-top: 5%;
 }
 
 .name{
     display: inline;
-    margin-left: 90px;
-    margin-right: 90px;
+    margin-left: 5%;
+    margin-right: 4%;
 }
 
-/* 버튼 */
+/* 아이콘 */
 
-.icon {
+.exitIcon {
     margin-top: 0;
     margin-left: 90%;
     transition: all 0.25s;
 }
 
-.icon:hover {
+.exitIcon:hover {
     transform: scale(1.2);
 }
 
-.icon:hover::after {
+.exitIcon:hover::after {
     content: "";
     width: 30px;
     height: 30px;
@@ -78,6 +68,8 @@ input {
     transform: translate(-50%, -50%);
     animation: ring 1.5s infinite;
 }
+
+/* 버튼 */
 
 button {
     font-family: 'BRRA_R', serif;
@@ -107,6 +99,43 @@ button:hover::after {
     left: 50%;
     transform: translate(-50%, -50%);
     animation: ring 1.5s infinite;
+}
+
+/* 게임 */
+
+.numberContainer{
+    margin-top: 0.5%;
+    margin-left: 32.5%;
+    width: 1000px;
+    height: 150px;
+}
+.numberBox{
+    margin-left: 5%;
+    width: 100px;
+    height: 100px;
+
+    border: 3px solid black;
+    border-style: dotted;
+
+    float: left;
+    background-color: darkgray;
+}
+
+.numberBox:hover{
+    background-color: pink;
+}
+
+.numberBox:visited{
+    background-color: pink;
+}
+
+.numberBox p{
+    font-size: 35px;
+    font-family: 'BRRA_R', serif;
+}
+
+#gamePage{
+    margin-left: 2%;
 }
 
 /* 푸터 */

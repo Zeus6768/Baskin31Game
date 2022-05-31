@@ -10,6 +10,7 @@
 /* 전체 설정 */
 
 body {
+    text-align: center;
     font-family: 'BRRA_R', serif;
     font-size: 125%;
 }
@@ -32,23 +33,11 @@ input {
     margin-top: 8%;
 }
 
-#readyPage{
-    text-align: center;
-}
-
-#gamePage{
-    text-align: center;
-}
-
 #number {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-}
-
-#readyIceCreamImage {
-    text-align: center;
 }
 
 #gameIceCreamImage {
@@ -148,13 +137,11 @@ button:hover::after {
 }
 
 .numberBox p{
-    text-align: center;
     font-size: 35px;
     font-family: 'BRRA_R', serif;
 }
 
 #gamePage{
-    text-align: center;
     margin-left: 2%;
 }
 

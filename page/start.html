@@ -6,14 +6,28 @@
     <link rel="stylesheet" href="31Game.css">
     <title>31Game-start</title>
 </head>
+<script src="/socket.io/socket.io.js"></script>
+<!--script src = "/func.js"></script!-->
+<script>
+    const socket = io()
+
+    // socket.on('connect', function () {
+    //     console.log('user connected')
+    // }) 
+
+    function enter() {
+        var name = document.getElementById('inputName').value
+        socket.emit('enter', { msg: name })
+    }
+</script>
 
 <body>
 
     <div id="startPage">
         <img src="image/rogo/BRlogo3.jpeg" width="600"> <br>
         <form action="/start" method="get">
-            <input type="text" placeholder="이름입력"> <br><br>
-            <button type="submit">입장하기</button>
+            <input type="text" placeholder="이름입력" id = "inputName"> <br><br>
+            <button type="submit" onclick="enter()">입장하기</button>
         </form>
     </div>
 

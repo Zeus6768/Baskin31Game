@@ -6,12 +6,24 @@
     <link rel="stylesheet" href="31Game.css">
     <title>31Game-ready</title>
 </head>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io()
+    console.log('ready')
+    var namearr = new Array() //이름 저장하는 배열 생성
+    socket.on('newUser', data => { //이름 새로 받을때마다 실행되는 이벤트
+        namearr = data.name //namearr배열에 새로받은 이름까지 포함해서 다시 할당
+        console.log(namearr)
+    })
+
+</script>
 
 <body>
 
     <div class="exitIcon">
         <h2>나가기
-            <img src="image/icon/logout.png" width="40"> </h2>
+            <img src="image/icon/logout.png" width="40">
+        </h2>
         <br>
     </div>
 
@@ -35,7 +47,9 @@
 
     <div id="readyPage">
         <p>5명이 모두 들어오면 시작할 수 있습니다.</p>
-        <button type="button">시작하기</button>
+        <form action="/ready" method="get">
+            <button type="submit">시작하기</button>
+        </form>
     </div>
 </body>
 

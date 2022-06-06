@@ -18,7 +18,23 @@ app.get('/', (_, res) => {
 
 app.get('/ready', (req, res) => {
 	const username = req.query.username;
-	res.render('ready.html', { username: username });
+	if (username === '') {
+		res.send(
+			`<script>
+				alert('이름을 입력해주세요.');
+				location.href = '/';
+			</script>`
+		);
+	} else if (includeUser(username)) {
+		res.send(
+			`<script>
+				alert('이미 접속한 유저의 이름입니다.');
+				location.href = '/';
+			</script>`
+		);
+	} else {
+		res.render('ready.html', { username: username });
+	}
 })
 
 app.get('/game', (req, res) => {
@@ -43,7 +59,7 @@ io.on('connection', socket => {
 				name: data.username
 			}
 			usersWaiting.push(user);
-			console.log(data.username + '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
+			console.log(data.username, '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
 		}
 		io.emit('usersWaiting', usersWaiting);
 		console.log(usersWaiting);
@@ -52,7 +68,7 @@ io.on('connection', socket => {
 	socket.on('disconnect', () => {
 		const idx = usersWaiting.findIndex(user => user.id === socket.id);
 		if (idx !== -1) {
-			console.log(ip, usersWaiting[idx].name, '유저가 나갔습니다.');
+			console.log(usersWaiting[idx].name, '님이 나갔습니다. 현재 유저 수 :', usersWaiting.length);
 			usersWaiting = usersWaiting.filter(user => user.id !== socket.id);
 			io.emit('usersWaiting', usersWaiting);
 		}
@@ -66,4 +82,8 @@ server.listen(port, () => {
 
 function getUserCount() {
 	return usersWaiting.length;
+}
+
+function includeUser(username) {
+	return usersWaiting.find(user => user.name === username);
 }

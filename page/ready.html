@@ -25,11 +25,11 @@
         <img src="image/iceCream/shootingStar.png" width="200">
 
         <br>
-        <h2 id="name1" class="name"></h2>
-        <h2 id="name2" class="name"></h2>
-        <h2 id="name3" class="name"></h2>
-        <h2 id="name4" class="name"></h2>
-        <h2 id="name5" class="name"></h2>
+        <h2 id="name1" class="name">대기중...</h2>
+        <h2 id="name2" class="name">대기중...</h2>
+        <h2 id="name3" class="name">대기중...</h2>
+        <h2 id="name4" class="name">대기중...</h2>
+        <h2 id="name5" class="name">대기중...</h2>
 
         <br><br><br>
 
@@ -46,16 +46,10 @@
 <script>
     const socket = io()
     console.log('ready')
-    var namearr = new Array() //이름 저장하는 배열 생성
     socket.on('newUser', data => { //이름 새로 받을때마다 실행되는 이벤트
-        namearr = data.name //namearr배열에 새로받은 이름까지 포함해서 다시 할당
-        console.log(namearr)
-
-        document.getElementById("name1").innerHTML = namearr[0]
-        document.getElementById("name2").innerHTML = namearr[1]
-        document.getElementById("name3").innerHTML = namearr[2]
-        document.getElementById("name4").innerHTML = namearr[3]
-        document.getElementById("name5").innerHTML = namearr[4]
+        for (i=0; i<data.length; i++) {
+            document.getElementsByClassName('name')[i].innerHTML = data[i].name;
+        }
     })
 </script>
 

@@ -63,7 +63,7 @@ io.sockets.on('connection', socket => {
 		}
 
 	})
-	io.emit('newUser', { name: namearr })
+	io.emit('newUser', namearr)
 	console.log(namearr)
 	if(i == 5){
 		buffer = true

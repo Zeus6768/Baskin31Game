@@ -25,11 +25,11 @@
         <img src="image/iceCream/shootingStar.png" width="200">
 
         <br>
-        <h2 id="name1" class="name">대기중...</h2>
-        <h2 id="name2" class="name">대기중...</h2>
-        <h2 id="name3" class="name">대기중...</h2>
-        <h2 id="name4" class="name">대기중...</h2>
-        <h2 id="name5" class="name">대기중...</h2>
+        <h2 id="name1" class="name"></h2>
+        <h2 id="name2" class="name"></h2>
+        <h2 id="name3" class="name"></h2>
+        <h2 id="name4" class="name"></h2>
+        <h2 id="name5" class="name"></h2>
         
         <br><br><br>
         
@@ -58,13 +58,23 @@
 
     // 새로운 유저 입장
     socket.on('usersWaiting', users => {
+        // 이 유저가 서버의 유저 목록 안에 있는지 확인
+        const isValid = users.find(user => username === user.name)
+        
         // 유저 5명 접속 시 버튼 활성화
-        if (users.length === 5) {
+        if (users.length === 5 && isValid) {
             document.getElementById('submit').disabled = false;
+        } else {
+            document.getElementById('submit').disabled = true;
         }
+        
         // 유저 접속 시 갱신
-        for (let i=0; i<users.length; i++) {
-            document.getElementsByClassName('name')[i].innerHTML = users[i];
+        for (let i=0; i<5; i++) {
+            if (users[i] && users[i].name) {
+                document.getElementsByClassName('name')[i].innerHTML = users[i].name;
+            } else {
+                document.getElementsByClassName('name')[i].innerHTML = '대기중...';
+            }
         }
     });
 </script>

@@ -27,24 +27,37 @@ app.get('/game', (req, res) => {
 })
 
 const MAXUSER = 5;
-const usersWaiting = new Array();
-const usersInGame = new Object();
+let usersWaiting = new Array();
+let usersInGame = new Object();
 
 io.on('connection', socket => {
 	const req = socket.request;
-	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	console.log(ip.substr(7));
+	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress.substr(7);
 
-	socket.on('userIn', data => { // 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
+	// 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
+	socket.on('userIn', data => {
 		if (usersWaiting.length < MAXUSER) {
-			usersWaiting.push(data.username);
+			const user = {
+				id: socket.id,
+				ip: ip,
+				name: data.username
+			}
+			usersWaiting.push(user);
 			console.log(data.username + '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
-			console.log(usersWaiting);
 		}
 		io.emit('usersWaiting', usersWaiting);
+		console.log(usersWaiting);
 	});
 
-	socket.on('disconnect', () => {});
+	socket.on('disconnect', () => {
+		const idx = usersWaiting.findIndex(user => user.id === socket.id);
+		if (idx !== -1) {
+			console.log(ip, usersWaiting[idx].name, '유저가 나갔습니다.');
+			usersWaiting = usersWaiting.filter(user => user.id !== socket.id);
+			io.emit('usersWaiting', usersWaiting);
+		}
+		console.log(usersWaiting);
+	});
 })
 
 server.listen(port, () => {

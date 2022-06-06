@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="31Game.css">
     <title>31Game-ready</title>
 </head>
-<script src="/socket.io/socket.io.js"></script>
+
 
 <body>
 
@@ -30,32 +30,41 @@
         <h2 id="name3" class="name">대기중...</h2>
         <h2 id="name4" class="name">대기중...</h2>
         <h2 id="name5" class="name">대기중...</h2>
-
+        
         <br><br><br>
-
+        
     </div>
-
+    
     <div id="readyPage">
+        <p>당신의 이름은 <%= username %> 입니다. </p>
         <p>5명이 모두 들어오면 시작할 수 있습니다.</p>
-        <form action="/ready" method="get">
-            <button type="submit">시작하기</button>
+        <form action="/game" method="get">
+            <button type="submit" id="submit" disabled>시작하기</button>
         </form>
     </div>
 </body>
-
-<script>
-    const socket = io()
-    console.log('ready')
-    socket.on('newUser', data => { //이름 새로 받을때마다 실행되는 이벤트
-        for (i=0; i<data.length; i++) {
-            document.getElementsByClassName('name')[i].innerHTML = data[i].name;
-        }
-    })
-</script>
-
-
 <footer>
     KAU 2022-1 김서현, 신재우, 장예빈, 정수현, 철멍어드
 </footer>
-
 </html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const username = new URLSearchParams(location.search).get('username');
+
+    // 대기실 입장 시 서버에 유저 이름 알림
+    socket.emit('userIn', { username: username });
+
+    // 새로운 유저 입장
+    socket.on('usersWaiting', users => {
+        // 유저 5명 접속 시 버튼 활성화
+        if (users.length === 5) {
+            document.getElementById('submit').disabled = false;
+        }
+        // 유저 접속 시 갱신
+        for (let i=0; i<users.length; i++) {
+            document.getElementsByClassName('name')[i].innerHTML = users[i];
+        }
+    });
+</script>

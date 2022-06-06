@@ -12,68 +12,45 @@ app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs')
 app.set('views', __dirname + '/page');
 
-app.get('/', (req, res) => {
-
-	res.render('start.html');
-})
-
-app.get('/start', (req, res) => {
-
-	res.render('ready.html');
-
+app.get('/', (_, res) => {
+	res.render('start.html', { userCount: getUserCount() });
 })
 
 app.get('/ready', (req, res) => {
-	if(buffer==true){
-	res.render('game.html')
-	}
+	const username = req.query.username;
+	res.render('ready.html', { username: username });
 })
 
 app.get('/game', (req, res) => {
-	res.render('game.html');
+	const username = req.query.username;
+	res.render('game.html', { username: username });
 })
 
-var i = 0
-var namearr = new Array() //넘겨줄 이름 저장 배열
-var buffer = new Boolean(false)
-var nameid = new Array()
-var user = {
-	id: '',
-	name : ''
-}
-io.sockets.on('connection', socket => {
-	socket.on('enter', data => { // 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
-		var user = {
-			id: socket.id,
-			name : data.msg
-		}
-		//console.log(userid)
-		if (i < 4) {
-			console.log(data.msg + '님이 접속했습니다.')
-			namearr.push(user)
-			i = i + 1
-			console.log(i)
-		}
-		else if (i = 4) {
-			console.log(data.msg + '님이 접속했습니다.')
-			namearr.push(user)
-			i = i + 1
-			console.log(i)
-			console.log('접속 인원 충족')
-		}
+const MAXUSER = 5;
+const usersWaiting = new Array();
+const usersInGame = new Object();
 
-	})
-	io.emit('newUser', namearr)
-	console.log(namearr)
-	if(i == 5){
-		buffer = true
-	}
+io.on('connection', socket => {
+	const req = socket.request;
+	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	console.log(ip.substr(7));
 
-	socket.on('disconnect', () => {
-	})
+	socket.on('userIn', data => { // 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
+		if (usersWaiting.length < MAXUSER) {
+			usersWaiting.push(data.username);
+			console.log(data.username + '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
+			console.log(usersWaiting);
+		}
+		io.emit('usersWaiting', usersWaiting);
+	});
 
+	socket.on('disconnect', () => {});
 })
 
 server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
-})
+});
+
+function getUserCount() {
+	return usersWaiting.length;
+}

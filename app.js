@@ -1,78 +1,56 @@
-// Settings
-const express = require("express");
-const app = express();
-const http = require('http');
-const port = 15000;
-const { WebSocketServer } = require("ws");
-const server = new WebSocketServer({ port: 15001 });
+const express = require("express"); //express 모듈 불러오기
+const socket = require('socket.io') //soket.io 모듈 불러오기
+const http = require('http'); //node.js 기본 내장 모듈 불러오기
+const app = express(); //express 객체 생성
+const server = http.createServer(app) // express http server 생성
+const io = socket(server) // 생성된 서버를 socket.io에 바인딩
+const port = 15000; //접속포트번호zz
 
-app.use(express.static("page"));
+app.use(express.static("page")) //page dir 이용
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/page');
 
-// Routings
-app.get('/', (req, res) => {
-	const context = { isOpen: isServerOpen() }
-	res.render('home.html', context);
-});
+app.get('/', (_, res) => {
+	res.render('start.html', { userCount: getUserCount() });
+})
 
-app.get('/start', (req, res) => {
-	const isOpen = isServerOpen();
-	if (isOpen) {
-		const name = req.query.username;
-		clientRoom.push(name);
-		res.render('waiting_room.html', { username: name, users: clientRoom });
-	} else {
-		console.log('서버가 가득 찼습니다.');
-		res.redirect('/');
-	}
-});
+app.get('/ready', (req, res) => {
+	const username = req.query.username;
+	res.render('ready.html', { username: username });
+})
 
-app.get('/mainfront', (req, res) => {
-	res.render('game_room.html');
-});
+app.get('/game', (req, res) => {
+	const username = req.query.username;
+	res.render('game.html', { username: username });
+})
 
-app.listen(port, () => {
+const MAXUSER = 5;
+const usersWaiting = new Array();
+const usersInGame = new Object();
+
+io.on('connection', socket => {
+	const req = socket.request;
+	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+	console.log(ip.substr(7));
+
+	socket.on('userIn', data => { // 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
+		if (usersWaiting.length < MAXUSER) {
+			usersWaiting.push(data.username);
+			console.log(data.username + '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
+			console.log(usersWaiting);
+		}
+		io.emit('usersWaiting', usersWaiting);
+	});
+
+	socket.on('disconnect', () => {});
+})
+
+server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
 });
 
-// WebSocket
-let clientRoom = new Array();
-
-function isServerOpen() {
-	return clientRoom.length < 5;
+function getUserCount() {
+	return usersWaiting.length;
 }
-
-server.on("connection", (ws, request) => {
-
-	if (clientRoom.length < 5) {
-
-		const ip = request.headers['x-forwarded-for'] || request.socket.remoteAddress;
-		console.log(`새로운 클라이언트 ${ip} 접속`);
-		server.clients.forEach((client) => {
-			client.send(clientRoom.toString());
-		})
-
-		if (ws.readyState === ws.OPEN) {
-			ws.send("배스킨라빈스 서버 접속을 환영합니다.");
-		};
-
-		ws.on("message", data => {
-			console.log(`Received from user: ${data}`);
-		});
-
-		ws.on('error', error => {
-			console.log(error);
-		});
-
-		ws.on('close', () => { // 작업량 과다하여 작업 안 할 예정.
-			console.log(new Date() + '클라이언트 접속 해제', request.socket.remoteAddress);
-			server.clients.forEach((client) => {
-				client.send(clientRoom.toString());
-			})
-		})
-	}
-
-});

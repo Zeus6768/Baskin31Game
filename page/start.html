@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="31Game.css">
+    <title>31Game-start</title>
+</head>
+
+<body>
+    <div id="startPage">
+        <img src="image/rogo/BRlogo3.jpeg" width="600"> <br>
+        <form action="/ready" method="get">
+            <input type="text" placeholder="이름입력" id="inputName" name="username"> <br><br>
+            <% if (userCount === 5) { %>
+                <p>방이 가득 찼습니다. </p>
+                <button type="submit" disabled>입장하기</button>
+            <% } else { %>
+                <p>현재 <%= userCount %> 명이 접속중입니다. </p>
+                <button type="submit">입장하기</button>
+            <% } %>
+        </form>
+    </div>
+</body>
+
+<footer>
+    KAU 2022-1 김서현, 신재우, 장예빈, 정수현, 철멍어드
+</footer>
+
+</html>

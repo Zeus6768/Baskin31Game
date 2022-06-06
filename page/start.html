@@ -17,7 +17,9 @@
 
     function enter() {
         var name = document.getElementById('inputName').value
-        socket.emit('enter', { msg: name })
+        socket.emit('enter', {
+            msg: name
+        })
     }
 </script>
 
@@ -26,7 +28,7 @@
     <div id="startPage">
         <img src="image/rogo/BRlogo3.jpeg" width="600"> <br>
         <form action="/start" method="get">
-            <input type="text" placeholder="이름입력" id = "inputName"> <br><br>
+            <input type="text" placeholder="이름입력" id="inputName"> <br><br>
             <button type="submit" onclick="enter()">입장하기</button>
         </form>
     </div>

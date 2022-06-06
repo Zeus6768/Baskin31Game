@@ -34,23 +34,34 @@ app.get('/game', (req, res) => {
 })
 
 var i = 0
-var namearr = new Array() //이름 저장 배열
+var namearr = new Array() //넘겨줄 이름 저장 배열
 var buffer = new Boolean(false)
-io.sockets.on('connection', function (socket) {
+var nameid = new Array()
+var user = {
+	id: '',
+	name : ''
+}
+io.sockets.on('connection', socket => {
 	socket.on('enter', data => { // 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
+		var user = {
+			id: socket.id,
+			name : data.msg
+		}
+		//console.log(userid)
 		if (i < 4) {
 			console.log(data.msg + '님이 접속했습니다.')
-			namearr.push(data.msg)
+			namearr.push(user)
 			i = i + 1
 			console.log(i)
 		}
 		else if (i = 4) {
 			console.log(data.msg + '님이 접속했습니다.')
-			namearr.push(data.msg)
+			namearr.push(user)
 			i = i + 1
 			console.log(i)
 			console.log('접속 인원 충족')
 		}
+
 	})
 	io.emit('newUser', { name: namearr })
 	console.log(namearr)

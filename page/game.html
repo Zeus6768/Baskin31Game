@@ -28,15 +28,15 @@
     </div>
 
     <div class="numberContainer">
-        <input type="text" class="numberBox" value="1" onclick="checkNumber(this)">
-        <input type="text" class="numberBox" value="2" onclick="checkNumber(this)">
-        <input type="text" class="numberBox" value="3" onclick="checkNumber(this)">
+        <input type="text" class="numberBox" value="1" onclick="selectNumber(this)">
+        <input type="text" class="numberBox" value="2" onclick="selectNumber(this)">
+        <input type="text" class="numberBox" value="3" onclick="selectNumber(this)">
     </div>
 
-    <p id="test">선택한 숫자 : </p>
+    <p id="selectedNumber"></p>
 
     <div id="gamePage">
-        <button id="numberSubmit" type="submit" disabled>입력하기</button>
+        <button id="submitNumber" type="submit" onclick="submitNumber(selectedNumber)" disabled>입력하기</button>
     </div>
 
 
@@ -53,7 +53,8 @@
 <script>
     const socket = io();
     const username = new URLSearchParams(location.search).get('username');
-    let gameActive = false;
+    let selectedNumber = 0;
+    let submitAllowed = false;
 
     // 대기실 입장 시 서버에 유저 이름 알림
     socket.emit('userInGame', username);
@@ -66,7 +67,7 @@
         // 유저 접속 시 갱신
         for (let i=0; i<5; i++) {
             const names = document.getElementsByClassName('name');
-            if (users[i] && users[i].status === 'inGame') {
+            if (users[i] && users[i].inGame) {
                 names[i].innerHTML = users[i].name;
             } else if (users[i] && users[i].name) {
                 names[i].innerHTML = users[i].name + '(대기중)';
@@ -76,18 +77,30 @@
         }
     });
 
-    // 게임시작가능여부 알림
+    // 게임시작 가능 여부 알림
     socket.on('gameStart', data => {
-        if (data.gameActive) {
-            document.getElementById('numberSubmit').disabled = false;
+        if (data.gameActive && data.firstUser === username) {
+            document.getElementById('submitNumber').disabled = false;
         } else {
-            document.getElementById('numberSubmit').disabled = true;
+            document.getElementById('submitNumber').disabled = true;
         }
-        gameActive = data.gameActive;
         console.log(data.message);
     })
 
-    function checkNumber(event) {
-        document.getElementById('test').innerHTML = '선택한 수 : ' + event.value;
+    // 인게임
+    socket.on('broadcastNumber', data => {
+        const numberBoxes = document.getElementsByClassName('numberBox');
+        for (let i=0; i<3; i++) {
+            numberBoxes[i].value = String(data.number + i);
+        }
+    })
+
+    function selectNumber(event) {
+        document.getElementById('selectedNumber').innerHTML = '선택한 수 : ' + event.value;
+        selectedNumber = event.value;
+    }
+
+    function submitNumber(number) {
+        socket.emit('submitNumber', number);
     }
 </script>

@@ -25,11 +25,11 @@
         <img src="image/iceCream/shootingStar.png" width="200">
 
         <br>
-        <h2 id="name1" class="name"></h2>
-        <h2 id="name2" class="name"></h2>
-        <h2 id="name3" class="name"></h2>
-        <h2 id="name4" class="name"></h2>
-        <h2 id="name5" class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
         
         <br><br><br>
         
@@ -39,6 +39,7 @@
         <p>당신의 이름은 <%= username %> 입니다. </p>
         <p>5명이 모두 들어오면 시작할 수 있습니다.</p>
         <form action="/game" method="get">
+            <input type="text" name="username" style="display: none;" value="<%= username %>">
             <button type="submit" id="submit" disabled>시작하기</button>
         </form>
     </div>
@@ -58,7 +59,6 @@
 
     // 새로운 유저 입장
     socket.on('usersInServer', users => {
-        console.log(users);
         // 이 유저가 서버의 유저 목록 안에 있는지 확인
         const isValid = users.find(user => username === user.name)
         
@@ -71,8 +71,8 @@
         
         // 유저 접속 시 갱신
         for (let i=0; i<5; i++) {
-            if (users[i] && users[i].status === 'inGame') {
-                document.getElementsByClassName('name')[i].innerHTML = users[i].name + '(게임시작)';
+            if (users[i] && users[i].inGame) {
+                document.getElementsByClassName('name')[i].innerHTML = users[i].name + '(게임중)';
             } else if (users[i] && users[i].name) {
                 document.getElementsByClassName('name')[i].innerHTML = users[i].name;
             } else {

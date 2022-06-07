@@ -43,36 +43,73 @@ app.get('/game', (req, res) => {
 })
 
 const MAXUSER = 5;
-let usersWaiting = new Array();
-let usersInGame = new Object();
+let usersInReady = new Array();
+let usersInGame = new Array();
+const usersInServer = () => usersInReady.concat(usersInGame);
+const gameData = new Object();
 
 io.on('connection', socket => {
 	const req = socket.request;
 	const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress.substr(7);
 
 	// 새로운 접속자가 이름을 입력할 시 다른 소켓에게 알려줌
-	socket.on('userIn', data => {
-		if (usersWaiting.length < MAXUSER) {
+	socket.on('userInReady', data => {
+		if (getUserCount() < MAXUSER) {
 			const user = {
 				id: socket.id,
 				ip: ip,
-				name: data.username
+				name: data.username,
+				status: 'ready'
 			}
-			usersWaiting.push(user);
-			console.log(data.username, '님이 접속했습니다. 현재 유저 수 :', usersWaiting.length);
+			usersInReady.push(user);
+			console.log(data.username, '님이 접속했습니다. 대기중 유저 수 :', getUserCount());
 		}
-		io.emit('usersWaiting', usersWaiting);
-		console.log(usersWaiting);
+		io.emit('usersInServer', usersInServer());
 	});
 
-	socket.on('disconnect', () => {
-		const idx = usersWaiting.findIndex(user => user.id === socket.id);
-		if (idx !== -1) {
-			console.log(usersWaiting[idx].name, '님이 나갔습니다. 현재 유저 수 :', usersWaiting.length);
-			usersWaiting = usersWaiting.filter(user => user.id !== socket.id);
-			io.emit('usersWaiting', usersWaiting);
+	socket.on('userInGame', username => {
+		if (usersInGame.length < MAXUSER) {
+			const user = {
+				id: socket.id,
+				ip: ip,
+				name: username,
+				status: 'inGame'
+			}
+			usersInGame.push(user);
+			console.log(username, '님이 게임을 시작했습니다. 게임중 유저 수 :', getUserCount());	
 		}
-		console.log(usersWaiting);
+		
+		io.emit('usersInServer', usersInServer());
+		
+		if (usersInGame.length === MAXUSER) {
+			console.log('게임이 시작되었습니다');
+			data = { message: '게임이 시작되었습니다.', gameActive: true }
+			io.emit('gameStart', data);
+		} else {
+			console.log('유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.');
+			data = { message: '유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.', gameActive: false }
+			io.emit('gameStart', data);
+		}
+	})
+
+	socket.on('submitNumber', data => {
+		io.emit('broadcastNumber', data)
+	})
+
+	socket.on('disconnect', () => {
+		const iw = usersInReady.findIndex(user => user.id === socket.id);
+		const ig = usersInGame.findIndex(user => user.id === socket.id);
+		if (iw !== -1) {
+			console.log(usersInReady[iw].name, '님이 대기실에서 나갔습니다.');
+			usersInReady = usersInReady.filter(user => user.id !== socket.id);
+		} else if (ig !== -1) {
+			console.log(usersInGame[ig].name, '님이 게임에서 나갔습니다.' );
+			usersInGame = usersInGame.filter(user => user.id !== socket.id);
+		} else {
+			console.log(ip, socket.id, '올바르지 않은 접속입니다.')
+		}
+		io.emit('usersInServer', usersInServer());
+		console.log('users in server:', usersInServer());
 	});
 })
 
@@ -81,9 +118,9 @@ server.listen(port, () => {
 });
 
 function getUserCount() {
-	return usersWaiting.length;
+	return usersInServer().length;
 }
 
 function includeUser(username) {
-	return usersWaiting.find(user => user.name === username);
+	return usersInServer().find(user => user.name === username);
 }

@@ -17,33 +17,26 @@
         <img src="image/iceCream/shootingStar.png" width="200">
 
         <br>
-        <h1><%= username %></h1>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
+        <h2 class="name"></h2>
 
         <br><br><br>
 
     </div>
 
     <div class="numberContainer">
-        <div class="numberBox">
-            <p>20</p>
-        </div>
-        <div class="numberBox">
-            <p>21</p>
-        </div>
-        <div class="numberBox">
-            <p>22</p>
-        </div>
+        <input type="text" class="numberBox" value="1" onclick="checkNumber(this)">
+        <input type="text" class="numberBox" value="2" onclick="checkNumber(this)">
+        <input type="text" class="numberBox" value="3" onclick="checkNumber(this)">
     </div>
 
+    <p id="test">선택한 숫자 : </p>
+
     <div id="gamePage">
-        <form action="/start" method="get">
-            <button type="submit">입력하기</button>
-        </form>
+        <button id="numberSubmit" type="submit" disabled>입력하기</button>
     </div>
 
 
@@ -55,3 +48,46 @@
 </footer>
 
 </html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const username = new URLSearchParams(location.search).get('username');
+    let gameActive = false;
+
+    // 대기실 입장 시 서버에 유저 이름 알림
+    socket.emit('userInGame', username);
+
+    // 새로운 유저 입장
+    socket.on('usersInServer', users => {
+        // 이 유저가 서버의 유저 목록 안에 있는지 확인
+        const isValid = users.find(user => username === user.name)
+        
+        // 유저 접속 시 갱신
+        for (let i=0; i<5; i++) {
+            const names = document.getElementsByClassName('name');
+            if (users[i] && users[i].status === 'inGame') {
+                names[i].innerHTML = users[i].name;
+            } else if (users[i] && users[i].name) {
+                names[i].innerHTML = users[i].name + '(대기중)';
+            } else {
+                names[i].innerHTML = '오류';
+            }
+        }
+    });
+
+    // 게임시작가능여부 알림
+    socket.on('gameStart', data => {
+        if (data.gameActive) {
+            document.getElementById('numberSubmit').disabled = false;
+        } else {
+            document.getElementById('numberSubmit').disabled = true;
+        }
+        gameActive = data.gameActive;
+        console.log(data.message);
+    })
+
+    function checkNumber(event) {
+        document.getElementById('test').innerHTML = '선택한 수 : ' + event.value;
+    }
+</script>

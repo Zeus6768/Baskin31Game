@@ -54,10 +54,11 @@
     const username = new URLSearchParams(location.search).get('username');
 
     // 대기실 입장 시 서버에 유저 이름 알림
-    socket.emit('userIn', { username: username });
+    socket.emit('userInReady', { username: username });
 
     // 새로운 유저 입장
-    socket.on('usersWaiting', users => {
+    socket.on('usersInServer', users => {
+        console.log(users);
         // 이 유저가 서버의 유저 목록 안에 있는지 확인
         const isValid = users.find(user => username === user.name)
         
@@ -70,7 +71,9 @@
         
         // 유저 접속 시 갱신
         for (let i=0; i<5; i++) {
-            if (users[i] && users[i].name) {
+            if (users[i] && users[i].status === 'inGame') {
+                document.getElementsByClassName('name')[i].innerHTML = users[i].name + '(게임시작)';
+            } else if (users[i] && users[i].name) {
                 document.getElementsByClassName('name')[i].innerHTML = users[i].name;
             } else {
                 document.getElementsByClassName('name')[i].innerHTML = '대기중...';

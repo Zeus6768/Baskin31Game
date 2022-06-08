@@ -10,34 +10,50 @@
 <body>
 
     <div id="gameIceCreamImage">
-        <img src="image/iceCream/almondBonbon.png" width="200">
-        <img src="image/iceCream/mintChoco.png" width="200">
-        <img src="image/iceCream/momIsAlien.png" width="200">
-        <img src="image/iceCream/newYorkCheese.png" width="200">
-        <img src="image/iceCream/shootingStar.png" width="200">
+        <ul id="name">
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/almondBonbon.png" width="200">
+                    <h2 id="name1" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/mintChoco.png" width="200">
+                    <h2 id="name2" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/momIsAlien.png" width="200">
+                    <h2 id="name3" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/newYorkCheese.png" width="200">
+                    <h2 id="name4" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/shootingStar.png" width="200">
+                    <h2 id="name5" class="name">대기중...</h2>
+                </a>
+            </li>
+        </ul>
 
         <br>
-        <h1><%= username %></h1>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-        <h2 class="name">name</h2>
-
-        <br><br><br>
 
     </div>
 
     <div class="numberContainer">
-        <div class="numberBox">
-            <p>20</p>
-        </div>
-        <div class="numberBox">
-            <p>21</p>
-        </div>
-        <div class="numberBox">
-            <p>22</p>
-        </div>
+        <input type="radio" id="number1" name="test">
+        <label for="number1">1</label>
+        <input type="radio" id="number2" name="test">
+        <label for="number2">2</label>
+        <input type="radio" id="number3" name="test">
+        <label for="number3">3</label>
     </div>
 
     <div id="gamePage">
@@ -45,8 +61,6 @@
             <button type="submit">입력하기</button>
         </form>
     </div>
-
-
 
 </body>
 

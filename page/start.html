@@ -13,7 +13,7 @@
         <form action="/ready" method="get">
             <input type="text" placeholder="이름입력" id="inputName" name="username"> <br><br>
             <% if (userCount === 5) { %>
-                <p>방이 가득 찼습니다. </p>
+                <p>방이 가득 찼습니다.</p>
                 <button type="submit" disabled>입장하기</button>
             <% } else { %>
                 <p>현재 <%= userCount %> 명이 접속중입니다. </p>

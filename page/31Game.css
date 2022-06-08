@@ -44,6 +44,28 @@ input {
     margin-right: 4%;
 }
 
+#name > li {
+    display: inline-block;
+    position: relative;
+}
+
+#name > li > a {
+    display:block;
+    position:relative;
+    padding-bottom:20px;
+    margin: 10px;
+}
+
+#name > li > a > h2 {
+    position:absolute;
+    bottom:0;
+    left:50%;
+    color:black;
+    line-height:0em;
+    white-space:nowrap;
+    transform:translate(-60%, 0)
+}
+
 /* 아이콘 */
 
 .exitIcon {
@@ -104,34 +126,40 @@ button:hover::after {
 /* 게임 */
 
 .numberContainer{
-    margin-top: 0.5%;
+    margin-top: 0.1%;
     margin-left: 32.5%;
-    width: 1000px;
+    width: 36%;
     height: 150px;
-}
-.numberBox{
-    margin-left: 5%;
-    width: 100px;
-    height: 100px;
 
-    border: 3px solid black;
-    border-style: dotted;
-
-    float: left;
-    background-color: darkgray;
-}
-
-.numberBox:hover{
-    background-color: pink;
-}
-
-.numberBox:visited{
-    background-color: pink;
-}
-
-.numberBox p{
-    font-size: 35px;
+    font-size: 30px;
     font-family: 'BRRA_R', serif;
+}
+
+input[type=radio]{
+    width: 0;
+    height: 0;
+    position: absolute
+}
+
+input[type=radio] + label{
+    padding: .75em 1.3em;
+    box-sizing: border-box;
+    position: relative;
+    display: inline-block;
+    border: 3px solid gray;
+    border-style: dotted;
+    background-color: #FFF;
+    line-height: 140%;
+    text-align: center;
+    box-shadow: 0 0 0 rgba(255, 255, 255, 0);
+    transition: border-color .15s ease-out,  color .25s ease-out,  background-color .15s ease-out, box-shadow .15s ease-out;
+    cursor: pointer;
+}
+
+input[type=radio]:checked + label{
+    background-color: pink;
+    color: #FFF;
+    z-index: 1;
 }
 
 #gamePage{

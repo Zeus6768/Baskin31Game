@@ -64,6 +64,20 @@
 
 </body>
 
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    const socket = io();
+    const username = new URLSearchParams(location.search).get('username');
+    socket.emit('userIn', {
+        username: username
+    });
+    socket.on('usersWaiting', users => {
+        for (let i = 0; i < users.length; i++) {
+            document.getElementsByClassName('name')[i].innerHTML = users[i];
+        }
+    });
+</script>
+
 <footer>
     KAU 2022-1 김서현, 신재우, 장예빈, 정수현, 철멍어드
 </footer>

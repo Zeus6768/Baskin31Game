@@ -18,25 +18,45 @@
     </div>
 
     <div id="readyIceCreamImage">
-        <img src="image/iceCream/almondBonbon.png" width="200">
-        <img src="image/iceCream/mintChoco.png" width="200">
-        <img src="image/iceCream/momIsAlien.png" width="200">
-        <img src="image/iceCream/newYorkCheese.png" width="200">
-        <img src="image/iceCream/shootingStar.png" width="200">
+        <ul id="name">
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/almondBonbon.png" width="200">
+                    <h2 id="name1" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/mintChoco.png" width="200">
+                    <h2 id="name2" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/momIsAlien.png" width="200">
+                    <h2 id="name3" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/newYorkCheese.png" width="200">
+                    <h2 id="name4" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/shootingStar.png" width="200">
+                    <h2 id="name5" class="name">대기중...</h2>
+                </a>
+            </li>
+        </ul>
 
         <br>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        
-        <br><br><br>
-        
     </div>
-    
+
     <div id="readyPage">
-        <p>당신의 이름은 <%= username %> 입니다. </p>
+        <p>당신의 이름은
+            <%= username %> 입니다. </p>
         <p>5명이 모두 들어오면 시작할 수 있습니다.</p>
         <form action="/game" method="get">
             <input type="text" name="username" style="display: none;" value="<%= username %>">
@@ -47,6 +67,7 @@
 <footer>
     KAU 2022-1 김서현, 신재우, 장예빈, 정수현, 철멍어드
 </footer>
+
 </html>
 
 <script src="/socket.io/socket.io.js"></script>

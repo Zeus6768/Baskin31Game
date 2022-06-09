@@ -10,27 +10,50 @@
 <body>
 
     <div id="gameIceCreamImage">
-        <img src="image/iceCream/almondBonbon.png" width="200">
-        <img src="image/iceCream/mintChoco.png" width="200">
-        <img src="image/iceCream/momIsAlien.png" width="200">
-        <img src="image/iceCream/newYorkCheese.png" width="200">
-        <img src="image/iceCream/shootingStar.png" width="200">
+        <ul id="name">
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/almondBonbon.png" width="200">
+                    <h2 id="name1" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/mintChoco.png" width="200">
+                    <h2 id="name2" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/momIsAlien.png" width="200">
+                    <h2 id="name3" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/newYorkCheese.png" width="200">
+                    <h2 id="name4" class="name">대기중...</h2>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <img src="image/iceCream/shootingStar.png" width="200">
+                    <h2 id="name5" class="name">대기중...</h2>
+                </a>
+            </li>
+        </ul>
 
         <br>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-        <h2 class="name"></h2>
-
-        <br><br><br>
 
     </div>
 
     <div class="numberContainer">
-        <input type="text" class="numberBox" value="1" onclick="selectNumber(this)">
-        <input type="text" class="numberBox" value="2" onclick="selectNumber(this)">
-        <input type="text" class="numberBox" value="3" onclick="selectNumber(this)">
+        <input type="radio" id="number1" name="test" value="1" onclick="selectNumber(this)">
+        <label for="number1">1</label>
+        <input type="radio" id="number2" name="test" value="2" onclick="selectNumber(this)">
+        <label for="number2">2</label>
+        <input type="radio" id="number3" name="test" value="3" onclick="selectNumber(this)">
+        <label for="number3">3</label>
     </div>
 
     <p id="selectedNumber"></p>
@@ -38,8 +61,6 @@
     <div id="gamePage">
         <button id="submitNumber" type="submit" onclick="submitNumber(selectedNumber)" disabled>입력하기</button>
     </div>
-
-
 
 </body>
 

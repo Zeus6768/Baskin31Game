@@ -52,7 +52,7 @@ app.get('/game', (req, res) => {
 const MAXUSER = 5;
 let usersInReady = new Array();
 let usersInGame = new Array();
-const usersInServer = () => usersInReady.concat(usersInGame);
+const usersInServer = () => usersInGame.concat(usersInReady);
 const gameData = new Object();
 
 io.on('connection', socket => {
@@ -68,7 +68,7 @@ io.on('connection', socket => {
 				inGame: false
 			}
 			usersInReady.push(user);
-			console.log(data.username, '님이 접속했습니다. 대기중 유저 수 :', getUserCount());
+			console.log(data.username, '님이 접속했습니다. 대기중 유저 수 :', usersInReady.length);
 		}
 		io.emit('usersInServer', usersInServer());
 	});
@@ -82,7 +82,7 @@ io.on('connection', socket => {
 				inGame: true
 			}
 			usersInGame.push(user);
-			console.log(username, '님이 게임을 시작했습니다. 게임중 유저 수 :', getUserCount());	
+			console.log(username, '님이 게임을 시작했습니다. 게임중 유저 수 :', usersInGame.length);	
 		}
 		io.emit('usersInServer', usersInServer());
 		
@@ -108,10 +108,10 @@ io.on('connection', socket => {
 		const iw = usersInReady.findIndex(user => user.id === socket.id);
 		const ig = usersInGame.findIndex(user => user.id === socket.id);
 		if (iw !== -1) {
-			console.log(usersInReady[iw].name, '님이 대기실에서 나갔습니다.');
+			console.log(usersInReady[iw].name, '님이 대기실에서 나갔습니다. 대기중 유저 수 :', usersInReady.length);
 			usersInReady = usersInReady.filter(user => user.id !== socket.id);
 		} else if (ig !== -1) {
-			console.log(usersInGame[ig].name, '님이 게임에서 나갔습니다.' );
+			console.log(usersInGame[ig].name, '님이 게임에서 나갔습니다. 게임중 유저 수 :', usersInGame.length);
 			usersInGame = usersInGame.filter(user => user.id !== socket.id);
 			io.emit('gameStart', { message: '유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.', gameActive: false });
 		} else {

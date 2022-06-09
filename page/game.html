@@ -48,18 +48,18 @@
     </div>
 
     <div class="numberContainer">
-        <input type="radio" id="number1" name="test">
+        <input type="radio" id="number1" name="test" value="1" onclick="selectNumber(this)">
         <label for="number1">1</label>
-        <input type="radio" id="number2" name="test">
+        <input type="radio" id="number2" name="test" value="2" onclick="selectNumber(this)">
         <label for="number2">2</label>
-        <input type="radio" id="number3" name="test">
+        <input type="radio" id="number3" name="test" value="3" onclick="selectNumber(this)">
         <label for="number3">3</label>
     </div>
 
+    <p id="selectedNumber"></p>
+
     <div id="gamePage">
-        <form action="/start" method="get">
-            <button type="submit">입력하기</button>
-        </form>
+        <button id="submitNumber" type="submit" onclick="submitNumber(selectedNumber)" disabled>입력하기</button>
     </div>
 
 </body>
@@ -74,12 +74,54 @@
 <script>
     const socket = io();
     const username = new URLSearchParams(location.search).get('username');
-    socket.emit('userIn', {
-        username: username
-    });
-    socket.on('usersWaiting', users => {
-        for (let i = 0; i < users.length; i++) {
-            document.getElementsByClassName('name')[i].innerHTML = users[i];
+    let selectedNumber = 0;
+    let submitAllowed = false;
+
+    // 대기실 입장 시 서버에 유저 이름 알림
+    socket.emit('userInGame', username);
+
+    // 새로운 유저 입장
+    socket.on('usersInServer', users => {
+        // 이 유저가 서버의 유저 목록 안에 있는지 확인
+        const isValid = users.find(user => username === user.name)
+        
+        // 유저 접속 시 갱신
+        for (let i=0; i<5; i++) {
+            const names = document.getElementsByClassName('name');
+            if (users[i] && users[i].inGame) {
+                names[i].innerHTML = users[i].name;
+            } else if (users[i] && users[i].name) {
+                names[i].innerHTML = users[i].name + '(대기중)';
+            } else {
+                names[i].innerHTML = '오류';
+            }
         }
     });
+
+    // 게임시작 가능 여부 알림
+    socket.on('gameStart', data => {
+        if (data.gameActive && data.firstUser === username) {
+            document.getElementById('submitNumber').disabled = false;
+        } else {
+            document.getElementById('submitNumber').disabled = true;
+        }
+        console.log(data.message);
+    })
+
+    // 인게임
+    socket.on('broadcastNumber', data => {
+        const numberBoxes = document.getElementsByClassName('numberBox');
+        for (let i=0; i<3; i++) {
+            numberBoxes[i].value = String(data.number + i);
+        }
+    })
+
+    function selectNumber(event) {
+        document.getElementById('selectedNumber').innerHTML = '선택한 수 : ' + event.value;
+        selectedNumber = event.value;
+    }
+
+    function submitNumber(number) {
+        socket.emit('submitNumber', number);
+    }
 </script>

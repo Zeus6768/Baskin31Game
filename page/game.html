@@ -9,35 +9,42 @@
 
 <body>
 
+    <div class="exitIcon" onclick="javascript:location.href='/'">
+        <h2>나가기
+            <img src="image/icon/logout.png" width="40">
+        </h2>
+        <br>
+    </div>
+
     <div id="gameIceCreamImage">
         <ul id="name">
             <li>
                 <a href="#">
-                    <img src="image/iceCream/almondBonbon.png" width="200">
+                    <img class="userImage" src="image/iceCream/almondBonbon.png" width="200">
                     <h2 id="name1" class="name">대기중...</h2>
                 </a>
             </li>
             <li>
                 <a href="#">
-                    <img src="image/iceCream/mintChoco.png" width="200">
+                    <img class="userImage" src="image/iceCream/mintChoco.png" width="200">
                     <h2 id="name2" class="name">대기중...</h2>
                 </a>
             </li>
             <li>
                 <a href="#">
-                    <img src="image/iceCream/momIsAlien.png" width="200">
+                    <img class="userImage" src="image/iceCream/momIsAlien.png" width="200">
                     <h2 id="name3" class="name">대기중...</h2>
                 </a>
             </li>
             <li>
                 <a href="#">
-                    <img src="image/iceCream/newYorkCheese.png" width="200">
+                    <img class="userImage" src="image/iceCream/newYorkCheese.png" width="200">
                     <h2 id="name4" class="name">대기중...</h2>
                 </a>
             </li>
             <li>
                 <a href="#">
-                    <img src="image/iceCream/shootingStar.png" width="200">
+                    <img class="userImage" src="image/iceCream/shootingStar.png" width="200">
                     <h2 id="name5" class="name">대기중...</h2>
                 </a>
             </li>
@@ -48,18 +55,18 @@
     </div>
 
     <div class="numberContainer">
-        <input type="radio" id="number1" name="test" value="1" onclick="selectNumber(this)">
-        <label for="number1">1</label>
-        <input type="radio" id="number2" name="test" value="2" onclick="selectNumber(this)">
-        <label for="number2">2</label>
-        <input type="radio" id="number3" name="test" value="3" onclick="selectNumber(this)">
-        <label for="number3">3</label>
+        <input type="radio" id="number1" class="numberInput" value="1" onclick="selectNumber(this)">
+        <label for="number1" class="numberLabel">1</label>
+        <input type="radio" id="number2" class="numberInput" value="2" onclick="selectNumber(this)">
+        <label for="number2" class="numberLabel">2</label>
+        <input type="radio" id="number3" class="numberInput" value="3" onclick="selectNumber(this)">
+        <label for="number3" class="numberLabel">3</label>
     </div>
 
-    <p>당신의 이름은 <%= username %> 입니다.</p>
+    <p id="currentUser"></p>
     <p id="selectedNumber"></p>
     <div id="gamePage">
-        <button id="submitNumber" type="submit" onclick="submitNumber(selectedNumber)" disabled>입력하기</button>
+        <button id="submitNumber" type="submit" onclick="submitNumber()" disabled>입력하기</button>
     </div>
 
 </body>
@@ -74,8 +81,12 @@
 <script>
     const socket = io();
     const username = new URLSearchParams(location.search).get('username');
-    let selectedNumber = 0;
-    let submitAllowed = false;
+    const gameInfo = new Object();
+    gameInfo.isSelected = false;
+    gameInfo.selectedNumber = 0;
+    gameInfo.usernames = [];
+    gameInfo.currentUserID = 0;
+    gameInfo.thistUserID = 0;
 
     // 대기실 입장 시 서버에 유저 이름 알림
     socket.emit('userInGame', username);
@@ -83,8 +94,8 @@
     // 새로운 유저 입장
     socket.on('usersInServer', users => {
         // 이 유저가 서버의 유저 목록 안에 있는지 확인
-        const isValid = users.find(user => username === user.name)
-        
+        const isValid = users.find(user => username === user.name);
+    
         // 유저 접속 시 갱신
         for (let i=0; i<5; i++) {
             const names = document.getElementsByClassName('name');
@@ -100,28 +111,96 @@
 
     // 게임시작 가능 여부 알림
     socket.on('gameStart', data => {
-        if (data.gameActive && data.firstUser === username) {
-            document.getElementById('submitNumber').disabled = false;
-        } else {
-            document.getElementById('submitNumber').disabled = true;
+        const userImageElement = document.getElementsByClassName('userImage');
+        if (data.gameActive) {
+            gameInfo.usernames = data.usernames;
+            gameInfo.currentUserID = data.currentUserID;
+            gameInfo.thistUserID = data.usernames.findIndex(user => user === username);
+            document.getElementById('currentUser').innerHTML = gameInfo.usernames[gameInfo.currentUserID] + '님의 차례입니다.';
+            userImageElement[gameInfo.currentUserID].style.transition = 'all 0.25s';
+            userImageElement[gameInfo.currentUserID].style.transform = 'scale(1.2)';
+            // 본인 차례일 경우 제출 버튼 활성화
+            if (gameInfo.usernames[gameInfo.currentUserID] === username) {
+                document.getElementById('submitNumber').disabled = false;
+            } else {
+                document.getElementById('submitNumber').disabled = true;
+                for (let i=0; i<3; i++) {
+                    document.getElementsByClassName('numberInput')[i].disabled = true;
+                }
+            }
         }
-        console.log(data.message);
-    })
+    });
 
     // 인게임
     socket.on('broadcastNumber', data => {
-        const numberBoxes = document.getElementsByClassName('numberBox');
-        for (let i=0; i<3; i++) {
-            numberBoxes[i].value = String(data.number + i);
+        const userImageElement = document.getElementsByClassName('userImage');
+        const currentUserElement = document.getElementById('currentUser');
+        const currentNumber = document.getElementById('selectedNumber');
+        console.log("broadcastNumber data:\n", data);
+        if (data.isEnd) { // 종료 이벤트
+            const loser = gameInfo.usernames[data.nextUserID];
+            setTimeout(() => location.href=`end?loser=${loser}`, 3000);
+            let timer = 2
+            setInterval(() => {
+                currentNumber.innerHTML = `${timer}` + '...';
+                timer--;
+            }, 990)
+            currentUserElement.innerHTML = "게임이 종료되었습니다. 잠시 후 종료 페이지로 이동합니다.";
+        } else {
+            gameInfo.currentUserID = data.nextUserID;
+            const currentUsername = gameInfo.usernames[gameInfo.currentUserID];
+            const number = data.number;
+            const numberSubmit = document.getElementById('submitNumber');
+            const numberInputs = document.getElementsByClassName('numberInput');
+            const numberLables = document.getElementsByClassName('numberLabel');
+            for (let i=0; i<3; i++) {
+                if (number + i > 30) {
+                    numberInputs[i].value = '';
+                    numberLables[i].innerHTML = 'X';
+                } else {
+                    numberInputs[i].value = number + i;
+                    numberLables[i].innerHTML = number + i;
+                }
+            }
+            if (currentUsername === username) {
+                for (let i=0; i<3; i++){
+                    numberInputs[i].disabled = false;
+                }
+                numberSubmit.disabled = false;
+            } else {
+                for (let i=0; i<3; i++){
+                    numberInputs[i].disabled = true;
+                }
+                numberSubmit.disabled = true;
+            }
+            currentUserElement.innerHTML = currentUsername + '님의 차례입니다.';
+            userImageElement[gameInfo.currentUserID].style.transition = 'all 0.25s';
+            userImageElement[gameInfo.currentUserID].style.transform = 'scale(1.2)';
+            userImageElement[data.currentUserID].style.transition = 'all 0.25s';
+            userImageElement[data.currentUserID].style.transform = 'scale(1)';
         }
-    })
+    });
 
     function selectNumber(event) {
-        document.getElementById('selectedNumber').innerHTML = '선택한 수 : ' + event.value;
-        selectedNumber = event.value;
+        if (gameInfo.currentUserID == gameInfo.thistUserID){
+            gameInfo.selectedNumber = event.value;
+            document.getElementById('selectedNumber').innerHTML = '선택한 수 : ' + gameInfo.selectedNumber;
+            gameInfo.isSelected = true;
+        }
     }
 
-    function submitNumber(number) {
-        socket.emit('submitNumber', number);
+    function submitNumber() {
+        if (gameInfo.isSelected) {
+            const data = {
+                userID: gameInfo.thistUserID,
+                number: gameInfo.selectedNumber
+            }
+            socket.emit('submitNumber', data);
+        } else {
+            document.getElementById('selectedNumber').innerHTML = '숫자를 선택해 주세요!';
+        }
+        gameInfo.selectedNumber = '';
+        gameInfo.isSelected = false;
+        document.getElementById('selectedNumber').innerHTML = '';
     }
 </script>

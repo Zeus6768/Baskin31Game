@@ -34,7 +34,7 @@ input {
 }
 
 #endPage{
-    margin-top: 3%;
+    margin-top: 0;
 }
 
 #gameIceCreamImage {
@@ -72,7 +72,7 @@ input {
 /* 아이콘 */
 
 .exitIcon {
-    margin-top: -5%;
+    margin-top: 0;
     margin-left: 90%;
     transition: all 0.25s;
 }

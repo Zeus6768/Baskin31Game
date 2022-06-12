@@ -1,12 +1,12 @@
-const express = require("express"); //express 모듈 불러오기
-const socket = require('socket.io'); //soket.io 모듈 불러오기
-const http = require('http'); //node.js 기본 내장 모듈 불러오기
-const app = express(); //express 객체 생성
-const server = http.createServer(app) // express http server 생성
-const io = socket(server) // 생성된 서버를 socket.io에 바인딩
-const port = 15000; //접속포트번호
+const express = require("express");
+const socket = require('socket.io');
+const http = require('http');
+const app = express();
+const server = http.createServer(app);
+const io = socket(server);
+const port = 15000;
 
-app.use(express.static("page"))
+app.use(express.static("page"));
 
 app.engine('html', require('ejs').renderFile);
 app.set('view engine', 'ejs');
@@ -17,7 +17,7 @@ app.set('views', __dirname + '/page');
 ///////////
 app.get('/', (_, res) => {
 	res.render('start.html', { userCount: getUserCount() });
-})
+});
 
 app.get('/ready', (req, res) => {
 	const username = req.query.username;
@@ -38,12 +38,17 @@ app.get('/ready', (req, res) => {
 	} else {
 		res.render('ready.html', { username: username });
 	}
-})
+});
 
 app.get('/game', (req, res) => {
 	const username = req.query.username;
 	res.render('game.html', { username: username });
-})
+});
+
+app.get('/end', (req, res) => {
+	const loser = req.query.loser;
+	res.render('end.html', { username: loser })
+});
 
 
 ///////////
@@ -53,7 +58,6 @@ const MAXUSER = 5;
 let usersInReady = new Array();
 let usersInGame = new Array();
 const usersInServer = () => usersInGame.concat(usersInReady);
-const gameData = new Object();
 
 io.on('connection', socket => {
 	const req = socket.request;
@@ -68,7 +72,7 @@ io.on('connection', socket => {
 				inGame: false
 			}
 			usersInReady.push(user);
-			console.log(data.username, '님이 접속했습니다. 대기중 유저 수 :', usersInReady.length);
+			console.log(data.username, '님이 접속했습니다. 대기중 유저 수 :', usersInReady.length);			
 		}
 		io.emit('usersInServer', usersInServer());
 	});
@@ -91,36 +95,48 @@ io.on('connection', socket => {
 			const data = {
 				message: '게임이 시작되었습니다.',
 				gameActive: true,
-				firstUser: usersInGame[0].name
+				usernames: getUsernamesInGame(),
+				currentUserID: 0
 			}
 			io.emit('gameStart', data);
 		} else {
 			console.log('유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.');
 			io.emit('gameStart', { message: '유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.', gameActive: false });
 		}
-	})
+	});
 
-	socket.on('submitNumber', number => {
-		io.emit('broadcastNumber', number)
-	})
+	socket.on('submitNumber', data => {
+		console.log(data);
+		const gameData = new Object();
+		const number = Number(data.number);
+		gameData.currentUserID = data.userID;
+		gameData.nextUserID = (data.userID+1) % 5;
+		gameData.number = number + 1;
+		if (number < 30) {
+			gameData.isEnd = false;
+			io.emit('broadcastNumber', gameData);
+		} else if (number === 30) {
+			gameData.isEnd = true;
+			io.emit('broadcastNumber', gameData);
+		}
+	});
 
 	socket.on('disconnect', () => {
 		const iw = usersInReady.findIndex(user => user.id === socket.id);
 		const ig = usersInGame.findIndex(user => user.id === socket.id);
 		if (iw !== -1) {
-			console.log(usersInReady[iw].name, '님이 대기실에서 나갔습니다. 대기중 유저 수 :', usersInReady.length);
-			usersInReady = usersInReady.filter(user => user.id !== socket.id);
+			console.log(usersInReady[iw].name, '님이 대기실에서 나갔습니다. 대기중 유저 수 :', usersInReady.length-1);
+			usersInReady = usersInReady.filter(user => user && user.id !== socket.id);
 		} else if (ig !== -1) {
-			console.log(usersInGame[ig].name, '님이 게임에서 나갔습니다. 게임중 유저 수 :', usersInGame.length);
-			usersInGame = usersInGame.filter(user => user.id !== socket.id);
+			console.log(usersInGame[ig].name, '님이 게임에서 나갔습니다. 게임중 유저 수 :', usersInGame.length-1);
+			usersInGame = usersInGame.filter(user => user && user.id !== socket.id);
 			io.emit('gameStart', { message: '유저가 모두 들어오지 않아 게임을 진행할 수 없습니다.', gameActive: false });
 		} else {
-			console.log(ip, socket.id, '올바르지 않은 접속입니다.')
+			console.log(ip, socket.id, '올바르지 않은 접속입니다.');
 		}
-		console.log('users in server:', usersInServer());
 		io.emit('usersInServer', usersInServer());
 	});
-})
+});
 
 server.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
@@ -136,4 +152,13 @@ function getUserCount() {
 
 function includeUser(username) {
 	return usersInServer().find(user => user.name === username);
+}
+
+function getUsernamesInGame() {
+	const usernames = new Array();
+	for (user of usersInGame) {
+		console.log(user)
+		usernames.push(user.name);
+	}
+	return usernames;
 }

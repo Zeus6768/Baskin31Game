@@ -35,7 +35,6 @@ input {
 
 #gameIceCreamImage {
     text-align: center;
-    margin-top: 5%;
 }
 
 .name{
@@ -129,8 +128,7 @@ button:hover::after {
     margin-top: 0.1%;
     margin-left: 32.5%;
     width: 36%;
-    height: 150px;
-
+    height: 100px;
     font-size: 30px;
     font-family: 'BRRA_R', serif;
 }

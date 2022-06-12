@@ -65,10 +65,14 @@ input {
     transform:translate(-60%, 0)
 }
 
+#endPage{
+    margin-top: 3%;
+}
+
 /* 아이콘 */
 
 .exitIcon {
-    margin-top: 0;
+    margin-top: -5%;
     margin-left: 90%;
     transition: all 0.25s;
 }
@@ -103,6 +107,7 @@ button {
     border: none;
     margin-bottom: 30px;
     transition: all 0.25s;
+
 }
 
 button:hover {

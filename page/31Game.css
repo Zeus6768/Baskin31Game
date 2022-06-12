@@ -33,6 +33,10 @@ input {
     margin-top: 8%;
 }
 
+#endPage{
+    margin-top: 3%;
+}
+
 #gameIceCreamImage {
     text-align: center;
 }

@@ -33,6 +33,10 @@ input {
     margin-top: 8%;
 }
 
+#endPage{
+    margin-top: 0;
+}
+
 #gameIceCreamImage {
     text-align: center;
 }
@@ -103,6 +107,7 @@ button {
     border: none;
     margin-bottom: 30px;
     transition: all 0.25s;
+
 }
 
 button:hover {
